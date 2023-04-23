@@ -19,6 +19,7 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 // include routers
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/userRoutes');
+var questionsRouter = require('./routes/questionRoutes');
 
 // set up view engine
 app.set('views', path.join(__dirname, 'views'));
@@ -52,6 +53,7 @@ app.use(function (req, res, next) {
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/questions', questionsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

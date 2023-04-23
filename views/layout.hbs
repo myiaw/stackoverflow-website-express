@@ -16,8 +16,9 @@
           <ul class="navbar-nav ms-auto">
             {{#if session.userId}}
             <li class="nav-item"><a class="nav-link" href='/users/profile'>Profile</a></li>
-            <li class="nav-item"><a class="nav-link" href='/photos/publish'>Ask a question</a></li>
-            <li class="nav-item"><a class="nav-link" href='/users/logout'>Logout</a></li>
+            <li class="nav-item"><a class="nav-link" href='/questions'>Questions</a></li>
+          <li class="nav-item"><a class="nav-link" href='/questions/publish'>Ask a question</a></li>  
+          <li class="nav-item"><a class="nav-link" href='/users/logout'>Logout</a></li>
             {{else}}
             <li class="nav-item"><a class="nav-link" href='/users/login'>Login</a></li>
             <li class="nav-item"><a class="nav-link" href='/users/register'>Register</a></li>
@@ -30,3 +31,4 @@
     <script src="/js/bootstrap.min.js"></script>
   </body>
 </html>
+  
