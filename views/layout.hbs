@@ -1,23 +1,32 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
     <title>{{title}}</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
-    <nav>
-      <ul>
-        <li><a href='/'>Domov</a></li>
-        {{#if session.userId}}
-        <li><a href='/users/profile'>Profil</a></li>
-        <li><a href='/photos/publish'>Objavi sliko</a></li>
-        <li><a href='/users/logout'>Odjava</a></li>
-        {{else}}
-        <li><a href='/users/login'>Prijava</a></li>
-        <li><a href='/users/register'>Registracija</a></li>
-        {{/if}}
-      </ul>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">Home</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            {{#if session.userId}}
+            <li class="nav-item"><a class="nav-link" href='/users/profile'>Profile</a></li>
+            <li class="nav-item"><a class="nav-link" href='/photos/publish'>Ask a question</a></li>
+            <li class="nav-item"><a class="nav-link" href='/users/logout'>Logout</a></li>
+            {{else}}
+            <li class="nav-item"><a class="nav-link" href='/users/login'>Login</a></li>
+            <li class="nav-item"><a class="nav-link" href='/users/register'>Register</a></li>
+            {{/if}}
+          </ul>
+        </div>
+      </div>
     </nav>
     {{{body}}}
+    <script src="/js/bootstrap.min.js"></script>
   </body>
 </html>

@@ -3,8 +3,12 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var app = express(); // define app variable first
 
-// vključimo mongoose in ga povežemo z MongoDB
+// serve Bootstrap files
+app.use(express.static(__dirname + '/node_modules/bootstrap/dist'));
+
+// connect to MongoDB using mongoose
 var mongoose = require('mongoose');
 var mongoDB = "mongodb://127.0.0.1/ex03_db";
 mongoose.connect(mongoDB);
@@ -12,13 +16,11 @@ mongoose.Promise = global.Promise;
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-// vključimo routerje
+// include routers
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/userRoutes');
 
-var app = express();
-
-// view engine setup
+// set up view engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
