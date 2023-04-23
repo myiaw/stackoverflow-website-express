@@ -5,6 +5,19 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
+    <nav>
+      <ul>
+        <li><a href='/'>Domov</a></li>
+        {{#if session.userId}}
+        <li><a href='/users/profile'>Profil</a></li>
+        <li><a href='/photos/publish'>Objavi sliko</a></li>
+        <li><a href='/users/logout'>Odjava</a></li>
+        {{else}}
+        <li><a href='/users/login'>Prijava</a></li>
+        <li><a href='/users/register'>Registracija</a></li>
+        {{/if}}
+      </ul>
+    </nav>
     {{{body}}}
   </body>
 </html>
