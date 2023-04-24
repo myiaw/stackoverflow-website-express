@@ -3,34 +3,45 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var app = express(); // define app variable first
+ 
 
-// serve Bootstrap files
-app.use(express.static(__dirname + '/node_modules/bootstrap/dist'));
 
-// connect to MongoDB using mongoose
+// vključimo mongoose in ga povežemo z MongoDB
 var mongoose = require('mongoose');
 var mongoDB = "mongodb://127.0.0.1/ex03_db";
-mongoose.connect(mongoDB);
+mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }); 
 mongoose.Promise = global.Promise;
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-// include routers
+// vključimo routerje
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/userRoutes');
-var questionsRouter = require('./routes/questionRoutes');
+var questionRouter = require('./routes/questionRoutes');
+var answersRouter = require('./routes/answerRoutes');
 
-// set up view engine
+var app = express();
+const hbs = require('hbs');
+
+// Register the helper
+hbs.registerHelper('sortAnswers', function(answers) {
+  return answers.slice().sort(function(a, b) {
+    return b.isTheAnswer - a.isTheAnswer;
+  });
+});
+
+// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-
+// serve Bootstrap files
+app.use(express.static(__dirname + '/node_modules/bootstrap/dist'));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+const methodOverride = require('method-override');
+app.use(methodOverride('_method', { methods: ['POST', 'GET'] }));
 /**
  * Vključimo session in connect-mongo.
  * Connect-mongo skrbi, da se session hrani v bazi.
@@ -50,11 +61,10 @@ app.use(function (req, res, next) {
   res.locals.session = req.session;
   next();
 });
-
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/questions', questionsRouter);
-
+app.use('/questions', questionRouter);
+app.use('/answers', answersRouter); //?
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
