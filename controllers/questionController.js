@@ -62,7 +62,8 @@ module.exports = {
       tags: req.body.tags,
       createdAt: Date.now(),
       userId: req.session.userId,
-      postedBy: req.session.userId
+      postedBy: req.session.userId,
+      comments: []
     });
   
     question.save(function (err, question) {
@@ -109,6 +110,7 @@ module.exports = {
       question.title = req.body.title ? req.body.title : question.title;
       question.description = req.body.description ? req.body.description : question.description;
       question.tags = req.body.tags ? req.body.tags.split(',') : question.tags;
+      
 
       question.save(function (err, question) {
         if (err) {

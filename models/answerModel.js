@@ -23,7 +23,18 @@ const answerSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'user',
     required: true
-  }
+  },
+  comments: [{
+    content: String,
+    postedAt: {
+      type: Date,
+      default: Date.now
+    },
+    postedBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'user'
+    }
+  }]
 });
 
 const Answer = mongoose.model('answer', answerSchema);

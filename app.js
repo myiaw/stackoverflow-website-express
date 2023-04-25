@@ -19,6 +19,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/userRoutes');
 var questionRouter = require('./routes/questionRoutes');
 var answersRouter = require('./routes/answerRoutes');
+var commentRouter = require('./routes/commentRoutes');
 
 var app = express();
 const hbs = require('hbs');
@@ -77,6 +78,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/questions', questionRouter);
 app.use('/answers', answersRouter); 
+app.use('/comments', commentRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

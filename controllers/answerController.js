@@ -48,7 +48,8 @@ module.exports = {
       questionId: id,
       postedBy: req.session.userId,
       isTheAnswer: false,
-      userId: req.session.userId
+      userId: req.session.userId,
+      comments: []
     });
   
     answer.save(function (err, answer) {
@@ -157,7 +158,8 @@ submitAnswer: function(req, res) {
     isTheAnswer: false,
     questionId: questionId,
     postedBy: req.session.userId,
-    userId: req.session.userId
+    userId: req.session.userId,
+    comments: []
   };
 
 

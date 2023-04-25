@@ -8,60 +8,89 @@
   </div>
   <div class="col-9">
     <h1>{{question.title}}</h1>
-    <p>Description: {{question.description}}</p>
-    <p>Tags: {{question.tags}}</p>
-    <p>Posted by: {{question.postedBy.username}}</p>
-    <p>Posted at: {{question.createdAt}}</p>
-    <p id="qid" style="display:none; visibility:hidden;">{{question.postedBy._id}}</p>
-    <a href="/questions/{{question._id}}/answer" class="btn btn-primary">Answer</a>
-    
-    {{#if question.answers.length}}
-      <h2>Answers: </h2>
-      {{#each (sortAnswers question.answers)}}
-        <div class="card my-3">
+    <div class="row mb-3">
+      <div class="col">
+        <p>Description: {{question.description}}</p>
+        <p>Tags: {{question.tags}}</p>
+        <p>Posted by: {{question.postedBy.username}}</p>
+        <p>Posted at: {{question.createdAt}}</p>
+      </div>
+      <div class="col">
+        {{#if question.comments.length}}
+        <h3 >Question comments:</h3>
+        {{#each question.comments}}
+        <div class="card my-1">
           <div class="card-body">
-            <div class="row">
-              <div class="col-3">
-                {{#if this.postedBy.image}}
-                  <div class="text-center">
-                    <img class="mt-3" src="data:image/png;base64,{{bufferToBase64 this.postedBy.image}}" alt="User Image" style="max-height: 100px;"/>
-                  </div>
-                {{/if}}
-              </div>
-              <div class="col-9">
-                <p class="card-text">{{this.content}}</p>
-                <p class="card-text"><small class="text-muted">Answered by: {{this.postedBy.username}}</small></p>
-                <p class="card-text"><small class="text-muted">Posted at: {{this.postedAt}}</small></p>
-                {{#if this.isTheAnswer}}
-                  <p class="card-text"><small class="text-muted">This is the answer</small></p>
-                {{else}}
-                  <div class="d-flex justify-content-between">
-                    <form class="set-as-answer" data-answer-id="{{this._id}}">
-                      <button type="submit" class="btn btn-primary set-answer-btn">Set as the answer</button>
-                    </form>
-                    <form class="delete-answer" data-answer-id="{{this._id}}" data-answer-posted-by-id="{{this.postedBy.id}}">
-                      <button type="submit" class="btn btn-danger delete-answer-btn">Delete</button>
-                    </form>
-                  </div>
-                {{/if}}
-              </div>
-            </div>
+            <p class="card-text">{{this.content}}</p>
           </div>
         </div>
-      {{/each}}
-    {{else}}
-      <p>No answers yet.</p>
-    {{/if}}
+        {{/each}}
+        {{else}}
+        <p>No comments yet.</p>
+        {{/if}}
+      </div>
+    </div>
+    <div class="mb-3">
+      <a href="/questions/{{question._id}}/answer" class="btn btn-primary me-3">Answer</a>
+      <a href="/questions/{{question._id}}/comment" class="btn btn-secondary">Comment</a>
+    </div>
+    
+    
+  {{#if question.answers.length}}
+  <h2>Answers: </h2>
+  {{#each (sortAnswers question.answers)}}
+    <div class="card my-3">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-3">
+            {{#if this.postedBy.image}}
+              <div class="text-center">
+                <img class="mt-3" src="data:image/png;base64,{{bufferToBase64 this.postedBy.image}}" alt="User Image" style="max-height: 100px;"/>
+              </div>
+            {{/if}}
+          </div>
+          <div class="col-9">
+            <p class="card-text">{{this.content}}</p>
+            <p class="card-text"><small class="text-muted">Answered by: {{this.postedBy.username}}</small></p>
+            <p class="card-text"><small class="text-muted">Posted at: {{this.postedAt}}</small></p>
+            <div class="mb-3">
+              <a href="/answers/{{this._id}}/comment" class="btn btn-secondary">Comment</a>
+            </div>
+            {{#if this.isTheAnswer}}
+              <p class="card-text"><small class="text-muted">This is the answer</small></p>
+            {{else}}
+              <div class="d-flex justify-content-between">
+                <form class="set-as-answer" data-answer-id="{{this._id}}">
+                  <button type="submit" class="btn btn-primary set-answer-btn">Set as the answer</button>
+                </form>
+                <form class="delete-answer" data-answer-id="{{this._id}}" data-answer-posted-by-id="{{this.postedBy.id}}">
+                  <button type="submit" class="btn btn-danger delete-answer-btn">Delete</button>
+                </form>
+              </div>
+            {{/if}}
+            {{#if this.comments.length}}
+              <h5>Comments:</h5>
+              {{#each this.comments}}
+                <div class="card my-2">
+                  <div class="card-body">
+                    <p class="card-text">{{this.content}}</p>
+                  </div>
+                </div>
+              {{/each}}
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+  {{/each}}
+{{else}}
+  <p>No answers yet.</p>
+{{/if}}
   </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  const bufferToBase64Value = document.getElementById('buffer-to-base64').textContent;
-const questionPostedByImageValue = document.getElementById('question-posted-by-image').textContent;
-
-console.log("bufferToBase64Value: ", bufferToBase64Value);
-console.log("questionPostedByImageValue: ", questionPostedByImageValue);
     $(document).ready(function() {
     const pby = $('#qid').text();
     console.log(pby);

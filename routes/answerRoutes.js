@@ -1,13 +1,14 @@
 var express = require('express');
 var router = express.Router();
 var answerController = require('../controllers/answerController.js');
-
+var commentController = require('../controllers/commentController.js');
 /*
  * PUT
  */
 /*
  * GET show form to answer a question
  */
+router.get('/:id/comment', commentController.showAnswerForm);
 
 router.put('/:id', answerController.update);
 

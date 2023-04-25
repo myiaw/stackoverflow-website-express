@@ -36,6 +36,21 @@ const questionSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'answer',
     required: false
+  }],
+  comments: [{
+    content: {
+      type: String,
+      required: true
+    },
+    postedBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+      required: true
+    },
+    postedAt: {
+      type: Date,
+      default: Date.now
+    }
   }]
 });
 
