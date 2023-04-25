@@ -7,6 +7,8 @@ var answerController = require('../controllers/answerController.js');
  * GET
  */
 
+router.get('/search', questionController.search)
+
 
 router.get('/', questionController.list);
 

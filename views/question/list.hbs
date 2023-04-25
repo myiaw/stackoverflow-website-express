@@ -1,21 +1,51 @@
+<!-- Add this form element at the top of the view -->
+<form class="form-inline my-3" id="tag-search-form" action="/questions/search" method="GET">
+  <input class="form-control mr-sm-2 mb-2" type="search" placeholder="Search by tag" aria-label="Search" name="tag">
+  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+</form>
+
 <h1>Questions:</h1>
+{{#if searchQuery}}
+  <p>Showing results for tag: {{searchQuery}}</p>
+{{/if}}
 {{#each questions}}
-  <div class="card my-3">
-    <div class="card-body">
-      <h4 class="card-title">{{title}}</h4>
-      <p class="card-text">{{description}}</p>
-      <p class="card-text"><small class="text-muted">{{tags}}</small></p>
-      <a href="/questions/{{_id}}" class="btn btn-warning mx-auto text-center text-bold">Answers</a>
-      <form class="delete-question" data-question-id="{{_id}}" data-question-posted-by-id="{{userId}}">
-        <button type="button" class="btn btn-danger mt-2 delete-question-btn">Delete</button>
-      </form>
+  {{#if searchQuery}}
+    {{#if tags.includes searchQuery}}
+      <div class="card my-3">
+        <div class="card-body">
+          <h4 class="card-title">{{title}}</h4>
+          <p class="card-text">{{description}}</p>
+          <p class="card-text"><small class="text-muted">{{tags}}</small></p>
+          <a href="/questions/{{_id}}" class="btn btn-warning mx-auto text-center text-bold">Answers</a>
+          <form class="delete-question" data-question-id="{{_id}}" data-question-posted-by-id="{{userId}}">
+            <button type="button" class="btn btn-danger mt-2 delete-question-btn">Delete</button>
+          </form>
+        </div>
+        <div class="card-footer text-muted">
+          Posted by: <span>{{userId}}</span>
+          <br>
+          Created at: <span>{{createdAt}}</span>
+        </div>
+      </div>
+    {{/if}}
+  {{else}}
+    <div class="card my-3">
+      <div class="card-body">
+        <h4 class="card-title">{{title}}</h4>
+        <p class="card-text">{{description}}</p>
+        <p class="card-text"><small class="text-muted">{{tags}}</small></p>
+        <a href="/questions/{{_id}}" class="btn btn-warning mx-auto text-center text-bold">Answers</a>
+        <form class="delete-question" data-question-id="{{_id}}" data-question-posted-by-id="{{userId}}">
+          <button type="button" class="btn btn-danger mt-2 delete-question-btn">Delete</button>
+        </form>
+      </div>
+      <div class="card-footer text-muted">
+        Posted by: <span>{{userId}}</span>
+        <br>
+        Created at: <span>{{createdAt}}</span>
+      </div>
     </div>
-    <div class="card-footer text-muted">
-      Posted by: <span>{{userId}}</span>
-      <br>
-      Created at: <span>{{createdAt}}</span>
-    </div>
-  </div>
+  {{/if}}
 {{/each}}
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

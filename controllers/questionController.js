@@ -191,7 +191,26 @@ remove: function (req, res) {
   
         return res.render('question/post', data);
       });
+  },
+  search: function (req, res) {
+    console.log("in search");
+    const searchQuery = req.query.tag;
+    console.log(searchQuery);
+    Question.find({ tags: searchQuery })
+      .populate('userId', 'email')
+      .exec((err, questions) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).send(err);
+        }
+        if (questions.length === 0) {
+          return res.render('no-results');
+        } else {
+          return res.render('question/list', { questions, searchQuery });
+                }
+      });
   }
+
   
   
   

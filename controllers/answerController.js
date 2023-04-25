@@ -78,14 +78,20 @@ module.exports = {
   },
   
   update: function(req, res) {
+    console.log('Request body:'+ req.body.idPostedBy.toString())
+    console.log('Session:'+ req.session.userId)
+  
+    if (req.body.idPostedBy.toString() !== req.session.userId.toString()) {
+      res.status(403).send('Unauthorized');
+      return;
+    } 
     console.log('Request params:'+ req.params.id)
-    console.log('Update route reached'); // Add this line
     Answer.findByIdAndUpdate(req.params.id, { $set: { isTheAnswer: true } }, { new: true }, function(err, answer) {
       if (err) {
         res.status(500).send(err);
       } else {
-       console.log('Answer updated');
-       res.status(200).send(answer);
+        console.log('Answer updated');
+        res.status(200).send("answer updated");       
       }
     });
   },
