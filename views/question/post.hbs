@@ -14,7 +14,7 @@
         <p>Tags: {{question.tags}}</p>
         <p>Posted by: {{question.postedBy.username}}</p>
         <p>Posted at: {{question.createdAt}}</p>
-      </div>
+<p id="qid" style="display:none; visibility:hidden;">{{question.postedBy._id}}</p>      </div>
       <div class="col">
         {{#if question.comments.length}}
         <h3 >Question comments:</h3>
@@ -31,8 +31,12 @@
       </div>
     </div>
     <div class="mb-3">
+       {{#if session.userId}}
       <a href="/questions/{{question._id}}/answer" class="btn btn-primary me-3">Answer</a>
       <a href="/questions/{{question._id}}/comment" class="btn btn-secondary">Comment</a>
+      {{else}}
+      <a href="/users/login" class="btn btn-primary me-3">Login to answer or comment.</a>
+      {{/if}}
     </div>
     
     

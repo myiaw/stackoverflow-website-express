@@ -9,9 +9,10 @@ module.exports = {
   list: function (req, res) {
     Question.find()
       .populate('userId', 'username')
+      .sort({ createdAt: -1 }) 
       .exec(function (err, questions) {
         if (err) {
-          console.log(err); // Add this line for logging
+          console.log(err); 
           return res.status(500).json({
             message: 'Error when getting questions.',
             error: err
@@ -173,17 +174,17 @@ remove: function (req, res) {
   .populate('userId', 'username')
   .populate({
     path: 'postedBy',
-    select: 'username image', // Include the image field in the populated user object
-    model: 'user'
+    select: 'username image', 
   })
   .populate({
     path: 'answers',
     populate: {
       path: 'postedBy',
       model: 'user',
-      select: 'username image' // Include the image field in the populated user object
+      select: 'username image' 
     }
   })
+   .sort({ createdAt: -1 })
       .exec(function (err, question) {
         if (err) {
           console.log(err);
