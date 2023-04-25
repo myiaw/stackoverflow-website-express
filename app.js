@@ -29,6 +29,18 @@ hbs.registerHelper('sortAnswers', function(answers) {
     return b.isTheAnswer - a.isTheAnswer;
   });
 });
+hbs.registerHelper('bufferToBase64', function(buffer) {
+  console.log('Original Buffer:', buffer);
+  
+  if (buffer) {
+    const base64String = Buffer.from(buffer).toString('base64');
+    console.log('Converted Base64 String:', base64String);
+    
+    return new hbs.SafeString(base64String);
+  }
+  
+  return '';
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -64,7 +76,7 @@ app.use(function (req, res, next) {
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/questions', questionRouter);
-app.use('/answers', answersRouter); //?
+app.use('/answers', answersRouter); 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

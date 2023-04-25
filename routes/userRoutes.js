@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var userController = require('../controllers/userController.js');
 
-
+router.post('/:id/upload-image', userController.uploadImage);
 router.get('/', userController.list);
 router.get('/register', userController.showRegister);
 router.get('/login', userController.showLogin);

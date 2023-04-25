@@ -1,5 +1,6 @@
 const Question = require('../models/questionModel');
 const Answer = require('../models/answerModel');
+const User = require('../models/userModel');
 module.exports = {
 
   /**
@@ -63,16 +64,25 @@ module.exports = {
       userId: req.session.userId,
       postedBy: req.session.userId
     });
-
+  
     question.save(function (err, question) {
       if (err) {
         return res.status(500).json({
           message: 'Error when creating question.',
           error: err
         });
+      } else {
+        User.findByIdAndUpdate(req.session.userId, { $inc: { questionCount: 1 } }, function (err, user) {
+          if (err) {
+            return res.status(500).json({
+              message: 'Error when updating user.',
+              error: err
+            });
+          }
+  
+          return res.redirect('/questions');
+        })
       }
-
-      return res.redirect('/users/profile');
     });
   },
 
@@ -158,16 +168,20 @@ remove: function (req, res) {
     console.log(id);
   
     Question.findById(id)
-      .populate('userId', 'username')
-      .populate('postedBy', 'username')
-      .populate({
-        path: 'answers',
-        populate: {
-          path: 'postedBy',
-          model: 'user',
-          select: 'username'
-        }
-      })
+  .populate('userId', 'username')
+  .populate({
+    path: 'postedBy',
+    select: 'username image', // Include the image field in the populated user object
+    model: 'user'
+  })
+  .populate({
+    path: 'answers',
+    populate: {
+      path: 'postedBy',
+      model: 'user',
+      select: 'username image' // Include the image field in the populated user object
+    }
+  })
       .exec(function (err, question) {
         if (err) {
           console.log(err);

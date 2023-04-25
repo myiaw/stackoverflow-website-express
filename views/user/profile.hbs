@@ -1,19 +1,35 @@
 <div class="container mt-5 mx-auto">
-      <div class="col mb-4">
-      <a class="btn btn-danger w-100" href="/users/logout" role="button">Odjava</a>
+    <div class="col mb-4">
+        <a class="btn btn-danger w-100" href="/users/logout" role="button">Logout</a>
     </div>
-  <h1 class="mb-4">User Profile</h1>
-  
-  <div class="row mb-3">
-    <div class="col"><h2 class="fw-normal">Username:</h2></div>
-    <div class="col"><h2 class="fw-light">{{username}}</h2></div>
-  </div>
-  <div class="row mb-3">
-    <div class="col"><h2 class="fw-normal">E-mail:</h2></div>
-    <div class="col"><h2 class="fw-light">{{email}}</h2></div>
-  </div>
-  <div class="row">
-    <div class="col"></div>
-  
-  </div>
+    <div class="row mb-4">
+        <div class="col"><h1 class="mb-0">User Profile</h1></div>
+        <div class="col">
+            <img src="data:image/png;base64,{{bufferToBase64 image}}" alt="User Image" style="max-height: 100px;"/>
+            <form method="post" action="/users/{{id}}/upload-image" enctype="multipart/form-data">
+                <input type="file" name="image" accept="image/png, image/jpeg">
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col"><h2 class="fw-normal">Username:</h2></div>
+        <div class="col"><h2 class="fw-light">{{username}}</h2></div>
+    </div>
+    <div class="row mb-3">
+        <div class="col"><h2 class="fw-normal">E-mail:</h2></div>
+        <div class="col"><h2 class="fw-light">{{email}}</h2></div>
+    </div>
+    <div class="row mb-3">
+        <div class="col"><h2 class="fw-normal">Questions Asked:</h2></div>
+        <div class="col"><h2 class="fw-light">{{questionCount}}</h2></div>
+    </div>
+    <div class="row mb-3">
+        <div class="col"><h2 class="fw-normal">Amount of chosen answers:</h2></div>
+        <div class="col"><h2 class="fw-light">{{answeredQuestionCount}}</h2></div>
+    </div>
+    <div class="row mb-3">
+        <div class="col"><h2 class="fw-normal">Answers Posted:</h2></div>
+        <div class="col"><h2 class="fw-light">{{answerCount}}</h2></div>
+    </div>
 </div>

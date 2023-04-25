@@ -1,4 +1,8 @@
 var UserModel = require('../models/userModel.js');
+const multer = require('multer');
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 /**
  * userController.js
@@ -51,11 +55,15 @@ module.exports = {
      */
     create: function (req, res) {
         var user = new UserModel({
-			username : req.body.username,
-			password : req.body.password,
-			email : req.body.email
+            username: req.body.username,
+            password: req.body.password,
+            email: req.body.email,
+            image: req.body.image,
+            questionCount: 0,
+            answeredQuestionCount: 0,
+            answerCount: 0
         });
-
+    
         user.save(function (err, user) {
             if (err) {
                 return res.status(500).json({
@@ -63,7 +71,7 @@ module.exports = {
                     error: err
                 });
             }
-
+    
             //return res.status(201).json(user);
             return res.redirect('/users/login');
         });
@@ -74,7 +82,7 @@ module.exports = {
      */
     update: function (req, res) {
         var id = req.params.id;
-
+    
         UserModel.findOne({_id: id}, function (err, user) {
             if (err) {
                 return res.status(500).json({
@@ -82,17 +90,21 @@ module.exports = {
                     error: err
                 });
             }
-
+    
             if (!user) {
                 return res.status(404).json({
                     message: 'No such user'
                 });
             }
-
+    
             user.username = req.body.username ? req.body.username : user.username;
-			user.password = req.body.password ? req.body.password : user.password;
-			user.email = req.body.email ? req.body.email : user.email;
-			
+            user.password = req.body.password ? req.body.password : user.password;
+            user.email = req.body.email ? req.body.email : user.email;
+            user.image = req.body.image ? req.body.image : user.image;
+            user.questionCount = req.body.questionCount ? req.body.questionCount : user.questionCount;
+            user.answeredQuestionCount = req.body.answeredQuestionCount ? req.body.answeredQuestionCount : user.answeredQuestionCount;
+            user.answerCount = req.body.answerCount ? req.body.answerCount : user.answerCount;
+
             user.save(function (err, user) {
                 if (err) {
                     return res.status(500).json({
@@ -100,7 +112,7 @@ module.exports = {
                         error: err
                     });
                 }
-
+    
                 return res.json(user);
             });
         });
@@ -156,6 +168,8 @@ module.exports = {
                     err.status = 400;
                     return next(err);
                 } else{
+                    console.log("img: "+user.image);
+                    console.log("imgsize:" + user.image.length);
                     return res.render('user/profile', user);
                 }
             }
@@ -172,5 +186,23 @@ module.exports = {
                 }
             });
         }
-    }
+    },
+    uploadImage: [
+        upload.single('image'), 
+        function(req, res, next) {
+            const userId = req.params.id;
+            const imageFile = req.file;
+    
+            UserModel.findByIdAndUpdate(userId, { $set: { image: imageFile.buffer } }, function(err, user) {
+                if (err) {
+                    return res.status(500).json({
+                        message: 'Error when updating user image.',
+                        error: err
+                    });
+                }
+    
+                return res.redirect(`/users/profile`);
+            });
+        }
+    ]
 };

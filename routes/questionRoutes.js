@@ -12,7 +12,7 @@ router.get('/search', questionController.search)
 
 router.get('/', questionController.list);
 
-// Show the form to create a new question
+// Show the form to crea    te a new question
 router.get('/publish', questionController.showPublish);
 
 router.get('/:id/answer', answerController.showAnswerForm);

@@ -1,5 +1,6 @@
 const Answer = require('../models/answerModel');
 const Question = require('../models/questionModel.js');
+const User = require('../models/userModel.js');
 console.log(Answer);
 
 module.exports = {
@@ -85,16 +86,33 @@ module.exports = {
       res.status(403).send('Unauthorized');
       return;
     } 
+  
     console.log('Request params:'+ req.params.id)
+  
     Answer.findByIdAndUpdate(req.params.id, { $set: { isTheAnswer: true } }, { new: true }, function(err, answer) {
       if (err) {
         res.status(500).send(err);
-      } else {
-        console.log('Answer updated');
-        res.status(200).send("answer updated");       
+        return;
       }
+  
+      User.findByIdAndUpdate(answer.postedBy, {
+        $inc: {
+          answeredQuestionCount: 1
+        }
+      }, function(err, user) {
+        if (err) {
+          res.status(500).send(err);
+          return;
+        }
+  
+        console.log('Answer updated');
+        res.status(200).send("answer updated"); 
+      });
     });
   },
+  
+
+
   remove: function (req, res) {
     const answerId = req.params.id;
     
@@ -142,14 +160,28 @@ submitAnswer: function(req, res) {
     userId: req.session.userId
   };
 
+
   console.log('Answer data:', answerData);
 
   const answer = new Answer(answerData);
 
-  answer.save(function(err, savedAnswer) {
+ answer.save(function(err, savedAnswer) {
+  if (err) {
+    return res.status(500).json({
+      message: 'Error when submitting answer.',
+      error: err
+    });
+  }
+
+  // Update answer count for user
+  User.findByIdAndUpdate(req.session.userId, {
+    $inc: {
+      answerCount: 1
+    }
+  }, function(err, user) {
     if (err) {
       return res.status(500).json({
-        message: 'Error when submitting answer.',
+        message: 'Error when updating user.',
         error: err
       });
     }
@@ -171,6 +203,7 @@ submitAnswer: function(req, res) {
       return res.redirect(`/questions/${questionId}`);
     });
   });
+});
 }
 
 
