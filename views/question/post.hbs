@@ -2,7 +2,8 @@
 <p>{{question.description}}</p>
 <p>Tags: {{question.tags}}</p>
 <p>Posted by: {{question.userId.username}}</p>
-<p>Created at: {{question.createdAt}}</p>
+<p>Posted at: {{question.createdAt}}</p>
+<p id="qid">{{question.postedBy._id}}</p>
 <a href="/questions/{{question._id}}/answer" class="btn btn-primary">Answer</a>
 {{#if question.answers.length}}
   <h2>Answers</h2>
@@ -11,10 +12,12 @@
       <div class="card-body">
         <p class="card-text">{{this.content}}</p>
         <p class="card-text"><small class="text-muted">Answered by: {{this.postedBy.username}}</small></p>
+        <p class="card-text"><small class="text-muted">Posted at: {{this.postedAt}}</small></p>
         {{#if this.isTheAnswer}}
           <p class="card-text"><small class="text-muted">This is the answer</small></p>
         {{else}}
           <div class="d-flex justify-content-between">
+<<<<<<< HEAD
 <form class="set-as-answer" data-answer-id-answ="{{this._id}}">
   <button type="submit" class="btn btn-primary set-answer-btn">Set as the answer</button>
 </form>
@@ -23,6 +26,14 @@
 </form>
 </div>
 
+=======
+            <form class="set-as-answer" data-answer-id="{{this._id}}">
+              <button type="submit" class="btn btn-primary set-answer-btn">Set as the answer</button>
+            </form>
+            <form class="delete-answer" data-answer-id="{{this._id}}" data-answer-posted-by-id="{{this.postedBy.id}}">
+              <button type="submit" class="btn btn-danger delete-answer-btn">Delete</button>
+            </form>
+>>>>>>> br
           </div>
         {{/if}}
       </div>
@@ -32,36 +43,46 @@
   <p>No answers yet.</p>
 {{/if}}
 
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  $(document).ready(function() {
+    $(document).ready(function() {
+    const pby = $('#qid').text();
+    console.log(pby);
     $('.set-as-answer').each(function() {
       $(this).on('submit', function(event) {
         event.preventDefault();
         const answerId = $(this).attr('data-answer-id');
         const url = '/answers/' + answerId;
 
-        $.ajax({
-          url: url,
-          method: 'PUT',
-          contentType: 'application/json',
-          data: JSON.stringify({ isTheAnswer: true }),
-          success: function(data) {
-            console.log('Success:', data);
-            window.location.reload();
-          },
-          error: function(jqXHR, textStatus, errorThrown) {
-            console.error('Error:', errorThrown);
-          }
-        });
+      $.ajax({
+  url: url,
+  method: 'PUT',
+  contentType: 'application/json',
+  data: JSON.stringify({
+    isTheAnswer: true,
+    idPostedBy: pby
+  }),
+  success: function(data) {
+    console.log('Success:', data);
+    window.location.reload();
+  },
+  error: function(jqXHR, textStatus, errorThrown) {
+    console.error('Error:', errorThrown);
+  }
+});
       });
     });
 
     $('.delete-answer').each(function() {
       $(this).on('submit', function(event) {
         event.preventDefault();
+        const answerId = $(this).attr('data-answer-id'); // Get the answer id
         const answerPostedById = $(this).attr('data-answer-posted-by'); // Get the postedBy id
+        console.log(answerPostedById);
+
         const url = '/answers/' + answerId;
+
         $.ajax({
           url: url,
           method: 'DELETE',
@@ -81,6 +102,3 @@
     });
   });
 </script>
-
-
-
