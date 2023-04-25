@@ -30,6 +30,12 @@ hbs.registerHelper('sortAnswers', function(answers) {
   });
 });
 
+hbs.registerHelper('eq', function(arg1, arg2) {
+  return arg1 === arg2;
+});
+
+
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
