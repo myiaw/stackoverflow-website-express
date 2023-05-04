@@ -9,10 +9,10 @@ module.exports = {
   list: function (req, res) {
     Question.find()
       .populate('userId', 'username')
-      .sort({ createdAt: -1 }) 
+      .sort({ createdAt: -1 })
       .exec(function (err, questions) {
         if (err) {
-          console.log(err); 
+          console.log(err);
           return res.status(500).json({
             message: 'Error when getting questions.',
             error: err
@@ -56,11 +56,18 @@ module.exports = {
    * questionController.create()
    */
   create: function (req, res) {
-    console.log(req.session.userId);
+
+    console.log('Request body:', req.body);
+
+    // Check if tags exist, split by commas and trim whitespace
+    const tagsArray = req.body.tags
+      ? req.body.tags.split(',').map(tag => tag.trim())
+      : [];
+  
     const question = new Question({
       title: req.body.title,
       description: req.body.description,
-      tags: req.body.tags,
+      tags: tagsArray,
       createdAt: Date.now(),
       userId: req.session.userId,
       postedBy: req.session.userId,
@@ -87,6 +94,8 @@ module.exports = {
       }
     });
   },
+  
+
 
   /**
    * questionController.update()
@@ -111,7 +120,7 @@ module.exports = {
       question.title = req.body.title ? req.body.title : question.title;
       question.description = req.body.description ? req.body.description : question.description;
       question.tags = req.body.tags ? req.body.tags.split(',') : question.tags;
-      
+
 
       question.save(function (err, question) {
         if (err) {
@@ -132,33 +141,33 @@ module.exports = {
   /**
  * questionController.remove()
  */
-remove: function (req, res) {
-  const questionId = req.params.id;
+  remove: function (req, res) {
+    const questionId = req.params.id;
 
-  // Check if the user is authenticated
-  if (!req.session.userId) {
-    return res.status(401).send('You must be logged in to delete a question');
-  }
-
-  Question.findById(questionId, function (err, question) {
-    console.log(req.session.userId);
-    console.log(question.userId.toString());
-    if (err) {
-      return res.status(500).send(err);
-    }
-    if (question.userId && question.userId.toString() !== req.session.userId) {
-      return res.status(403).send('You are not authorized to delete this question');
+    // Check if the user is authenticated
+    if (!req.session.userId) {
+      return res.status(401).send('You must be logged in to delete a question');
     }
 
-    Question.findByIdAndRemove(questionId, function (err, question) {
+    Question.findById(questionId, function (err, question) {
+      console.log(req.session.userId);
+      console.log(question.userId.toString());
       if (err) {
         return res.status(500).send(err);
-      } else {
-        return res.status(200).send(question);
       }
+      if (question.userId && question.userId.toString() !== req.session.userId) {
+        return res.status(403).send('You are not authorized to delete this question');
+      }
+
+      Question.findByIdAndRemove(questionId, function (err, question) {
+        if (err) {
+          return res.status(500).send(err);
+        } else {
+          return res.status(200).send(question);
+        }
+      });
     });
-  });
-},
+  },
 
   showPublish: function (req, res) {
     res.render('question/publish');
@@ -169,22 +178,22 @@ remove: function (req, res) {
   showPage: function (req, res) {
     const id = req.params.id;
     console.log(id);
-  
+
     Question.findById(id)
-  .populate('userId', 'username')
-  .populate({
-    path: 'postedBy',
-    select: 'username image', 
-  })
-  .populate({
-    path: 'answers',
-    populate: {
-      path: 'postedBy',
-      model: 'user',
-      select: 'username image' 
-    }
-  })
-   .sort({ createdAt: -1 })
+      .populate('userId', 'username')
+      .populate({
+        path: 'postedBy',
+        select: 'username image',
+      })
+      .populate({
+        path: 'answers',
+        populate: {
+          path: 'postedBy',
+          model: 'user',
+          select: 'username image'
+        }
+      })
+      .sort({ createdAt: -1 })
       .exec(function (err, question) {
         if (err) {
           console.log(err);
@@ -193,42 +202,51 @@ remove: function (req, res) {
             error: err
           });
         }
-  
+
         if (!question) {
           return res.status(404).json({
             message: 'Question not found.'
           });
         }
-  
+
         console.log(question);
-  
+
         const data = {
           question: question
         };
-  
+
         return res.render('question/post', data);
       });
   },
-  search: function (req, res) {
+  search: function search(req, res) {
     console.log("in search");
-    const searchQuery = req.query.tag;
-    console.log(searchQuery);
-    Question.find({ tags: searchQuery })
+    let searchQuery = req.query.tag;
+    let tags = searchQuery.includes(',') ? searchQuery.split(',').map(tag => tag.trim()) : [searchQuery.trim()];
+    console.log("Search query:", searchQuery);
+    console.log("Tags:", tags);
+
+    Question.find({ tags: { $in: tags } })
       .populate('userId', 'email')
       .exec((err, questions) => {
         if (err) {
-          console.log(err);
+          console.log("Error:", err);
           return res.status(500).send(err);
         }
+        console.log("Questions:", questions);
         if (questions.length === 0) {
-          return res.render('no-results');
+          return res.render('no-results', { searchQuery: searchQuery });
         } else {
-          return res.render('question/list', { questions, searchQuery });
-                }
+          return res.render('question/list', { questions, searchQuery: searchQuery });
+        }
       });
   }
 
-  
-  
-  
+
+
+
+
+
+
+
+
 };

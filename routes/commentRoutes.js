@@ -23,6 +23,7 @@ router.post('/', commentController.create);
 /*
  * PUT
  */
+
 router.put('/:id', commentController.update);
 
 /*
